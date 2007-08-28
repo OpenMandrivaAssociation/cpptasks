@@ -2,11 +2,11 @@
 %define debug_package %{nil}
 %define gcj_support 1
 
-Summary:        Compile and link task
 Name:           cpptasks
 Version:        1.0
-Release:        %mkrel 0.b4.4
+Release:        %mkrel 0.b4.4.0
 Epoch:          0
+Summary:        Compile and link task
 License:        Apache License
 URL:            http://ant-contrib.sourceforge.net/
 Group:          Development/Java
@@ -75,7 +75,7 @@ ln -s %{name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}.jar
 # javadoc
 install -dm 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
 cp -pr build/javadocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
-ln -s %{name}-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{name} # ghost symlink
+ln -s %{name}-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{name}
 
 # manual
 install -dm 755 $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
@@ -102,10 +102,6 @@ rm -rf $RPM_BUILD_ROOT
 %{clean_gcjdb}
 %endif
 
-%post javadoc
-rm -f %{_javadocdir}/%{name}
-ln -s %{name}-%{version} %{_javadocdir}/%{name}
-
 %files
 %defattr(0644,root,root,0755)
 %doc LICENSE NOTICE
@@ -117,7 +113,7 @@ ln -s %{name}-%{version} %{_javadocdir}/%{name}
 %files javadoc
 %defattr(-,root,root,-)
 %doc %{_javadocdir}/%{name}-%{version}
-%ghost %doc %{_javadocdir}/%{name}
+%doc %{_javadocdir}/%{name}
 
 %files manual
 %defattr(-,root,root,-)
