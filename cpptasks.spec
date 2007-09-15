@@ -4,7 +4,7 @@
 
 Name:           cpptasks
 Version:        1.0
-Release:        %mkrel 0.b4.4.0
+Release:        %mkrel 0.b4.4.1
 Epoch:          0
 Summary:        Compile and link task
 License:        Apache License
@@ -23,8 +23,6 @@ BuildRequires:  xerces-j2
 Requires:  	ant >= 0:1.6
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 %if %{gcj_support}
-Requires(post):	java-gcj-compat
-Requires(postun): java-gcj-compat
 BuildRequires:	java-gcj-compat-devel
 %else
 BuildArch:	noarch
