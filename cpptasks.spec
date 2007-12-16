@@ -4,7 +4,7 @@
 
 Name:           cpptasks
 Version:        1.0
-Release:        %mkrel 0.b4.4.1
+Release:        %mkrel 0.b4.4.2
 Epoch:          0
 Summary:        Compile and link task
 License:        Apache License
@@ -15,7 +15,7 @@ Group:          Development/Java
 Source0:        http://easynews.dl.sourceforge.net/ant-contrib/cpptasks-1.0b4.tar.bz2
 Source1:	cpptasks-antlib.xml
 Requires:	xerces-j2
-BuildRequires:  jpackage-utils >= 0:1.5
+BuildRequires:  java-rpmbuild >= 0:1.5
 BuildRequires:  ant >= 0:1.6
 BuildRequires:  ant-junit >= 0:1.6
 BuildRequires:  junit
