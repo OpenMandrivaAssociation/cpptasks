@@ -21,6 +21,7 @@ BuildRequires:  ant-junit >= 0:1.6
 BuildRequires:  junit
 BuildRequires:  xerces-j2
 Requires:  	ant >= 0:1.6
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 %if %{gcj_support}
 BuildRequires:	java-gcj-compat-devel
 %else
