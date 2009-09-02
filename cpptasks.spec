@@ -4,7 +4,7 @@
 
 Name:           cpptasks
 Version:        1.0
-Release:        %mkrel 0.b4.4.2
+Release:        %mkrel 0.b4.4.3
 Epoch:          0
 Summary:        Compile and link task
 License:        Apache License
