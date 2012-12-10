@@ -118,3 +118,73 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_docdir}/%{name}-%{version}
 
 # -----------------------------------------------------------------------------
+
+
+%changelog
+* Thu Dec 09 2010 Oden Eriksson <oeriksson@mandriva.com> 0:1.0-0.b4.4.4mdv2011.0
++ Revision: 617435
+- the mass rebuild of 2010.0 packages
+
+* Wed Sep 02 2009 Thierry Vignaud <tv@mandriva.org> 0:1.0-0.b4.4.3mdv2010.0
++ Revision: 425149
+- rebuild
+
+* Fri Dec 21 2007 Olivier Blin <oblin@mandriva.com> 0:1.0-0.b4.4.2mdv2009.0
++ Revision: 136345
+- restore BuildRoot
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - kill re-definition of %%buildroot on Pixel's request
+
+* Sun Dec 16 2007 Anssi Hannula <anssi@mandriva.org> 0:1.0-0.b4.4.2mdv2008.1
++ Revision: 120855
+- buildrequire java-rpmbuild, i.e. build with icedtea on x86(_64)
+
+* Sat Sep 15 2007 Anssi Hannula <anssi@mandriva.org> 0:1.0-0.b4.4.1mdv2008.0
++ Revision: 87301
+- rebuild to filter out autorequires of GCJ AOT objects
+- remove unnecessary Requires(post) on java-gcj-compat
+
+* Tue Aug 28 2007 David Walluck <walluck@mandriva.org> 0:1.0-0.b4.4.0mdv2008.0
++ Revision: 72510
+- rebuild
+- Import cpptasks
+
+
+
+* Wed Aug 09 2006 David Walluck <walluck@mandriva.org> 0:1.0-0.b4.4mdv2007.0
+- (Build)Requires: xerces-j2
+
+* Mon Jul 24 2006 David Walluck <walluck@mandriva.org> 0:1.0-0.b4.3mdv2007.0
+- rebuild
+
+* Wed Jun 14 2006 David Walluck <walluck@mandriva.org> 0:1.0-0.b4.2mdv2007.0
+- fix duplicated LICENSE and NOTICE files
+
+* Sun Jun 04 2006 David Walluck <walluck@mandriva.org> 0:1.0-0.b4.1mdv2007.0
+
+* Fri Oct 28 2005 David Walluck <walluck@mandriva.org> 0:1.0-0.b3.2.0.2mdk
+- add antlib.xml
+
+* Fri Oct 28 2005 David Walluck <walluck@mandriva.org> 0:1.0-0.b3.2.0.1mdk
+- release
+
+* Mon Sep 06 2004 Ralph Apel <r.apel at r-apel.de> - 0:1.0-0.b3.2jpp
+- Upgrade to Ant 1.6.X
+- Build with ant-1.6.2
+- Upgraded to 1.0.b3 and relaxed requirements on Thu Jul 15 2004 
+  by Ralph Apel <r.apel at r-apel.de> as 0:1.0-0.b3.1jpp
+
+* Fri Aug 20 2004 Ralph Apel <r.apel at r-apel.de> - 0:1.0-0.b2.4jpp
+- Build with ant-1.6.2
+- Relax versioned BuildReq
+- Drop junit runtime requirement
+
+* Fri Aug 06 2004 Ralph Apel <r.apel at r-apel.de> - 0:1.0-0.b2.3jpp
+- Also runtime dep to Ant 1.6.X
+
+* Tue Jun 01 2004 Randy Watler <rwatler at finali.com> - 0:1.0-0.b2.2jpp
+- Upgrade to Ant 1.6.X
+
+* Wed Mar 24 2004 Ralph Apel <r.apel at r-apel.de> - 0:1.0-0.b2.1jpp
+- First JPackage release
