@@ -1,190 +1,124 @@
-%define section free
-%define debug_package %{nil}
-%define gcj_support 1
+%{?_javapackages_macros:%_javapackages_macros}
+Name:		cpptasks
+Version:	1.0b5
+Release:	15
+Summary:	Compile and link task for ant
+Group:		Development/Java
+License:	ASL 2.0
+URL:		http://ant-contrib.sourceforge.net/
+Source0:	http://downloads.sourceforge.net/ant-contrib/cpptasks-1.0b5.tar.gz
 
-Name:           cpptasks
-Version:        1.0
-Release:        %mkrel 0.b4.4.4
-Epoch:          0
-Summary:        Compile and link task
-License:        Apache License
-URL:            http://ant-contrib.sourceforge.net/
-Group:          Development/Java
-#Vendor:         JPackage Project
-#Distribution:   JPackage
-Source0:        http://easynews.dl.sourceforge.net/ant-contrib/cpptasks-1.0b4.tar.bz2
-Source1:	cpptasks-antlib.xml
-Requires:	xerces-j2
-BuildRequires:  java-rpmbuild >= 0:1.5
-BuildRequires:  ant >= 0:1.6
-BuildRequires:  ant-junit >= 0:1.6
-BuildRequires:  junit
-BuildRequires:  xerces-j2
-Requires:  	ant >= 0:1.6
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-%if %{gcj_support}
-BuildRequires:	java-gcj-compat-devel
-%else
+BuildRequires:	ant 
+BuildRequires:	maven-local
+
 BuildArch:	noarch
-%endif
 
 %description
-This task can compile various source languages 
-and produce executables, shared libraries 
-(aka DLL's) and static libraries. Compiler 
-adaptors are currently available for several 
-C/C++ compilers, FORTRAN, MIDL and Windows 
-Resource files. 
+This ant task can compile various source languages and produce
+executables, shared libraries (aka DLL's) and static libraries. Compiler
+adaptors are currently available for several C/C++ compilers, FORTRAN,
+MIDL and Windows Resource files.
 
 %package        javadoc
-Summary:        Javadoc for %{name}
-Group:          Development/Java
+Summary:	Javadoc for %{name}
 
-%description    javadoc
-%{summary}.
-
-%package        manual
-Summary:        Docs for %{name}
-Group:          Development/Java
-
-%description    manual
-%{summary}.
+%description	javadoc
+Javadoc documentation for %{summary}.
 
 %prep
-%setup -q -n %{name}-%{version}b4
-find . -name "*.jar" -exec rm {} \;
+%setup -q
 
+find . -name "*.jar" -exec rm -f {} \;
+find . -name "*.class" -exec rm -f {} \;
+
+sed -i 's/\r//' NOTICE 
+
+# Use default compiler configuration
+%pom_remove_plugin :maven-compiler-plugin
+
+# Let xmvn generate javadocs
+%pom_remove_plugin :maven-javadoc-plugin
+
+# Fix dependency on ant
+%pom_remove_dep ant:ant
+%pom_remove_dep ant:ant-nodeps
+%pom_remove_dep ant:ant-trax
+%pom_add_dep org.apache.ant:ant
+
+%mvn_file :%{name} ant/%{name}
 
 %build
-export OPT_JAR_LIST="ant/ant-junit junit"
-export CLASSPATH=$(build-classpath xerces-j2)
-%{__mkdir_p} build/classes/net/sf/antcontrib/cpptasks
-install -m 644 %{SOURCE1} build/classes/net/sf/antcontrib/cpptasks/antlib.xml
-%ant jars javadocs
+%mvn_build
 
 %install
-rm -rf $RPM_BUILD_ROOT
+%mvn_install
 
-# jars
-install -Dpm 644 build/lib/%{name}.jar \
-      $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
-ln -s %{name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}.jar
+# Place a file into ant's config dir
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/ant.d/
+echo "ant/%{name}" > $RPM_BUILD_ROOT/%{_sysconfdir}/ant.d/%{name}
 
-# javadoc
-install -dm 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
-cp -pr build/javadocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
-ln -s %{name}-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{name}
-
-# manual
-install -dm 755 $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
-cp -pr docs/* $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
-#cp -p LICENSE $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
-#cp -p NOTICE $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
-
-for i in LICENSE NOTICE `find $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version} -type f`; do
-  %{__perl} -pi -e 's/\r$//g' $i
-done
-
-%if %{gcj_support}
-%{_bindir}/aot-compile-rpm
-%endif
-
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-%if %{gcj_support}
-%post
-%{update_gcjdb}
-
-%postun
-%{clean_gcjdb}
-%endif
-
-%files
-%defattr(0644,root,root,0755)
+%files -f .mfiles
 %doc LICENSE NOTICE
-%{_javadir}/*.jar
-%if %{gcj_support}
-%{_libdir}/gcj/%{name}
-%endif
+%{_sysconfdir}/ant.d/%{name}
 
-%files javadoc
-%defattr(-,root,root,-)
-%doc %{_javadocdir}/%{name}-%{version}
-%doc %{_javadocdir}/%{name}
-
-%files manual
-%defattr(-,root,root,-)
-%doc %{_docdir}/%{name}-%{version}
-
-# -----------------------------------------------------------------------------
-
+%files javadoc -f .mfiles-javadoc
+%doc LICENSE NOTICE
 
 %changelog
-* Thu Dec 09 2010 Oden Eriksson <oeriksson@mandriva.com> 0:1.0-0.b4.4.4mdv2011.0
-+ Revision: 617435
-- the mass rebuild of 2010.0 packages
+* Wed Jun 17 2015 Mat Booth <mat.booth@redhat.com> - 1.0b5-15
+- Fix FTBFS
 
-* Wed Sep 02 2009 Thierry Vignaud <tv@mandriva.org> 0:1.0-0.b4.4.3mdv2010.0
-+ Revision: 425149
-- rebuild
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0b5-14
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
-* Fri Dec 21 2007 Olivier Blin <oblin@mandriva.com> 0:1.0-0.b4.4.2mdv2009.0
-+ Revision: 136345
-- restore BuildRoot
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0b5-13
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
-  + Thierry Vignaud <tv@mandriva.org>
-    - kill re-definition of %%buildroot on Pixel's request
+* Mon Aug 12 2013 Mat Booth <fedora@matbooth.co.uk> - 1.0b5-12
+- Use default compiler config and fix bad deps on ant.
 
-* Sun Dec 16 2007 Anssi Hannula <anssi@mandriva.org> 0:1.0-0.b4.4.2mdv2008.1
-+ Revision: 120855
-- buildrequire java-rpmbuild, i.e. build with icedtea on x86(_64)
+* Sun Aug 11 2013 Mat Booth <fedora@matbooth.co.uk> - 1.0b5-11
+- Build with maven 3, update for newer guidelines
 
-* Sat Sep 15 2007 Anssi Hannula <anssi@mandriva.org> 0:1.0-0.b4.4.1mdv2008.0
-+ Revision: 87301
-- rebuild to filter out autorequires of GCJ AOT objects
-- remove unnecessary Requires(post) on java-gcj-compat
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0b5-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
-* Tue Aug 28 2007 David Walluck <walluck@mandriva.org> 0:1.0-0.b4.4.0mdv2008.0
-+ Revision: 72510
-- rebuild
-- Import cpptasks
+* Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0b5-9
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
+* Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0b5-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
+* Thu Jan 12 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0b5-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
-* Wed Aug 09 2006 David Walluck <walluck@mandriva.org> 0:1.0-0.b4.4mdv2007.0
-- (Build)Requires: xerces-j2
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0b5-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
-* Mon Jul 24 2006 David Walluck <walluck@mandriva.org> 0:1.0-0.b4.3mdv2007.0
-- rebuild
+* Thu Sep 03 2009 D Haley <mycae@yahoo.com> - 1.0b5-5
+- Req needs whitespace
 
-* Wed Jun 14 2006 David Walluck <walluck@mandriva.org> 0:1.0-0.b4.2mdv2007.0
-- fix duplicated LICENSE and NOTICE files
+* Thu Sep 03 2009 D Haley <mycae@yahoo.com> - 1.0b5-4
+- tag bump
 
-* Sun Jun 04 2006 David Walluck <walluck@mandriva.org> 0:1.0-0.b4.1mdv2007.0
+* Thu Sep 03 2009 D Haley <mycae@yahoo.com> - 1.0b5-3
+- Remove excess BR
+- Fix subpackage dep
+- Fix doc installation 
 
-* Fri Oct 28 2005 David Walluck <walluck@mandriva.org> 0:1.0-0.b3.2.0.2mdk
-- add antlib.xml
+* Fri Aug 28 2009 D Haley <mycae@yahoo.com> - 1.0b5-2
+- Fix doc installation 
+- Move to _javadir/ant/ rather than _javadir/
+- Fix requires + buildrequires for both main and javadoc packages
+- Add README.fedora source in lieu of  maven build 
 
-* Fri Oct 28 2005 David Walluck <walluck@mandriva.org> 0:1.0-0.b3.2.0.1mdk
-- release
+* Sat Mar 14 2009 D Haley <mycae@yahoo.com> - 1.0b5-1
+- Update to b5
+- cpptasks now uses difficult mvn-doxia xdoc, so remove manual subpackage
+- Add distribution jar check
+- EOL conversion on NOTICE
+- Change summary & format description
+- Fix BuildRoot 
+- Change licence to ASL 2.0 from Apache Software Licence 2.0
+- Documentation to "Documentation" Group
 
-* Mon Sep 06 2004 Ralph Apel <r.apel at r-apel.de> - 0:1.0-0.b3.2jpp
-- Upgrade to Ant 1.6.X
-- Build with ant-1.6.2
-- Upgraded to 1.0.b3 and relaxed requirements on Thu Jul 15 2004 
-  by Ralph Apel <r.apel at r-apel.de> as 0:1.0-0.b3.1jpp
-
-* Fri Aug 20 2004 Ralph Apel <r.apel at r-apel.de> - 0:1.0-0.b2.4jpp
-- Build with ant-1.6.2
-- Relax versioned BuildReq
-- Drop junit runtime requirement
-
-* Fri Aug 06 2004 Ralph Apel <r.apel at r-apel.de> - 0:1.0-0.b2.3jpp
-- Also runtime dep to Ant 1.6.X
-
-* Tue Jun 01 2004 Randy Watler <rwatler at finali.com> - 0:1.0-0.b2.2jpp
-- Upgrade to Ant 1.6.X
-
-* Wed Mar 24 2004 Ralph Apel <r.apel at r-apel.de> - 0:1.0-0.b2.1jpp
-- First JPackage release
