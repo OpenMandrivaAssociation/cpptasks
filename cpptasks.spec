@@ -5,7 +5,7 @@ Release:	15
 Summary:	Compile and link task for ant
 Group:		Development/Java
 License:	ASL 2.0
-URL:		http://ant-contrib.sourceforge.net/
+URL:		https://ant-contrib.sourceforge.net/
 Source0:	http://downloads.sourceforge.net/ant-contrib/cpptasks-1.0b5.tar.gz
 
 BuildRequires:	ant 
